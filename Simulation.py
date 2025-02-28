@@ -6,6 +6,7 @@
 import numpy as np
 import pygame as pg
 from OpenGL.GL import *
+from Subspace import *
 
 class App:
     
@@ -39,6 +40,11 @@ class App:
     def quit(self):
 
         pg.QUIT()
+
+class Triangle:
+
+    def __init__ (self):
+        pass
 
 if __name__ == "__main__":
     myApp = App()
