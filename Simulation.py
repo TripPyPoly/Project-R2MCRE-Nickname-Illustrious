@@ -12,7 +12,7 @@ class App:
         glClearColor(0, 0, 0, 1)
         glOrtho(-10, 10, -10, 10, -1, 1)  # Orthographic projection
         
-        self.square = Square(side_length=6, center=(0, 0), rotation=30)
+        self.square = Square(side_length=6, center=(0, 0), rotation=30, rotation_speed=0.5)  # Added rotation_speed
         self.shadow_renderer = ShadowRenderer(self.square)
         
         self.mainLoop()
@@ -25,6 +25,9 @@ class App:
                     running = False
             
             glClear(GL_COLOR_BUFFER_BIT)
+            
+            # Update square's rotation
+            self.square.update_rotation()
             
             # Draw square
             self.square.draw()
@@ -42,21 +45,21 @@ class App:
         pg.quit()
 
 class Square:
-    def __init__(self, side_length=6, center=(0, 0), rotation=30):
+    def __init__(self, side_length=6, center=(0, 0), rotation=30, rotation_speed=1):
         self.side_length = side_length
         self.center = np.array(center)
-        self.rotation = np.radians(rotation)
+        self.rotation = np.radians(rotation) 
+        self.rotation_speed = np.radians(rotation_speed)
         self.vertices = self.generate_vertices()
-        self.polygon = Polygon(self.vertices)  # Create a shapely polygon for collision detection
+        self.polygon = Polygon(self.vertices)
 
     def generate_vertices(self):
-        """Generate square vertices given side length, center, and rotation."""
-        half_side = self.side_length / 2
+        hs = self.side_length / 2
         square = np.array([
-            [-half_side, -half_side],
-            [ half_side, -half_side],
-            [ half_side,  half_side],
-            [-half_side,  half_side]
+            [-hs, -hs],
+            [ hs, -hs],
+            [ hs,  hs],
+            [-hs,  hs]
         ])
         
         # Rotation matrix
@@ -69,9 +72,17 @@ class Square:
         rotated_square = (square @ rotation_matrix.T) + self.center
         return rotated_square
 
-    def draw(self):
-        """Draw the square using OpenGL."""
-        glColor3f(1, 1, 1)  # White color
+    def update_rotation(self):
+        self.rotation += self.rotation_speed
+        if self.rotation >= 2 * np.pi:
+            self.rotation -= 2 * np.pi
+
+        
+        self.vertices = self.generate_vertices()
+        self.polygon = Polygon(self.vertices)
+
+    def draw(self): #OPEN FUCKING GL RAHAHHAHAHAHAH
+        glColor3f(1, 1, 1)
         glBegin(GL_LINE_LOOP)
         for vertex in self.vertices:
             glVertex2f(vertex[0], vertex[1])

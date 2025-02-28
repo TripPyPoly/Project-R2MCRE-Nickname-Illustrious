@@ -151,7 +151,7 @@ class MonteCarloRayTracer:
         """Draw the rays while keeping the incoming rays parallel."""
     
         # Green: Parallel rays going all the way across
-        glColor3f(0, 1, 0)  # Green for incoming rays
+        glColor3f(0, 0.2, 0)  # Green for incoming rays
         glBegin(GL_LINES)
         for ray in self.rays:
             glVertex2f(ray.coords[0][0], ray.coords[0][1])  # Start far left
